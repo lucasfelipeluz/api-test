@@ -8,7 +8,7 @@ class ServicosModel {
                 .innerJoin('tipo_servico', 'tipo_servico.id', 'servicos.id_tipo_servico')
                 .innerJoin('usuarios', 'usuarios.id', 'servicos.idUsuario')
                 .select(
-                    ['servicos.titulo', 'servicos.descricao', 'servicos.data', 
+                    ['servicos.id as IdServicos', 'servicos.titulo', 'servicos.descricao', 'servicos.data', 
                     'tipo_servico.id as IdTipoServico', 'tipo_servico.tipoDoServico', 
                     'usuarios.id as IdUsuario', 'usuarios.nome as NomeUsuario'
                     ])
@@ -25,14 +25,13 @@ class ServicosModel {
 
     async GetServicoByQueryParams(query){
         try {
-            console.log(query)
             const data = await database
                 .table('servicos')
                 .where(query)
                 .innerJoin('tipo_servico', 'tipo_servico.id', 'servicos.id_tipo_servico')
                 .innerJoin('usuarios', 'usuarios.id', 'servicos.idUsuario')
                 .select(
-                    ['servicos.titulo', 'servicos.descricao', 'servicos.data', 
+                    ['servicos.id as IdServicos','servicos.titulo', 'servicos.descricao', 'servicos.data', 
                     'tipo_servico.id as IdTipoServico', 'tipo_servico.tipoDoServico', 
                     'usuarios.id as IdUsuario', 'usuarios.nome as NomeUsuario'
                     ])
@@ -47,13 +46,20 @@ class ServicosModel {
         }
     }
 
-    async AddServico(servico){
+    async AddServico(servico, agendamento = null){
         try {
-            const data = await database
+            if(agendamento){
+
+
+                return {status: true}
+            }
+
+            /* const data = await database
                 .insert(servico)
                 .table('servicos')
 
-            if (data.length > 0) return {status: true}
+            if (data.length > 0) return {status: true} */
+            return {status: true};
         } catch (error) {
             console.warn(error.message)
             return { status: false, msgError: error.message }
@@ -68,7 +74,6 @@ class ServicosModel {
                 .table('servicos')
 
 
-            console.log(data)
             if(data < 1) return {status: null, data: []}
             
             return { status: true, data: [] }
