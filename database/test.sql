@@ -26,18 +26,27 @@ DROP TABLE IF EXISTS `servicos`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `servicos` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `titulo` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0',
-  `descricao` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `titulo` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `descricao` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '0',
   `data` datetime NOT NULL,
   `idUsuario` int NOT NULL DEFAULT '0',
   `id_tipo_servico` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `serv/tipo` (`id_tipo_servico`),
   KEY `serv/usu` (`idUsuario`),
-  CONSTRAINT `serv/tipo` FOREIGN KEY (`id_tipo_servico`) REFERENCES `tipo_servico` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `serv/usu` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=608 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+  CONSTRAINT `serv/tipo` FOREIGN KEY (`id_tipo_servico`) REFERENCES `tipo_servico` (`id`),
+  CONSTRAINT `serv/usu` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=787 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `servicos`
+--
+
+LOCK TABLES `servicos` WRITE;
+/*!40000 ALTER TABLE `servicos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `servicos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tipo_servico`
@@ -48,10 +57,20 @@ DROP TABLE IF EXISTS `tipo_servico`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tipo_servico` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `tipoDoServico` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `tipoDoServico` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipo_servico`
+--
+
+LOCK TABLES `tipo_servico` WRITE;
+/*!40000 ALTER TABLE `tipo_servico` DISABLE KEYS */;
+INSERT INTO `tipo_servico` VALUES (1,'Gerente'),(3,'Caixa'),(4,'Supervisor'),(5,'Pesquisador de preços'),(6,'Repositor');
+/*!40000 ALTER TABLE `tipo_servico` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `usuarios`
@@ -62,12 +81,22 @@ DROP TABLE IF EXISTS `usuarios`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuarios` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0',
-  `login` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0',
-  `senha` varchar(200) COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `nome` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `login` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `senha` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `usuarios`
+--
+
+LOCK TABLES `usuarios` WRITE;
+/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` VALUES (1,'dev','dev','dev');
+/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -78,4 +107,4 @@ CREATE TABLE `usuarios` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-12 21:41:45
+-- Dump completed on 2022-05-12 23:24:58
