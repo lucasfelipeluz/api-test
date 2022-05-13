@@ -1,7 +1,8 @@
 const Responses = require('../utils/Responses')
 const ServicosModel = require('../model/ServicosModel');
 
-const Agendamento = require('../services/Agendamento')
+const Agendamento = require('../services/Agendamento');
+const Data = require('../utils/Data');
 
 
 class ServicosController {
@@ -31,10 +32,6 @@ class ServicosController {
             return Responses.badRequest(res, "Certifique-se que está passando todos os campos!")
         }
 
-        const {agendamento} = req.body;
-        const responseAgendamento = Agendamento.validar(agendamento)
-
-
         const { titulo, descricao, data, id_tipo_servico, idUsuario } = req.body;
 
         if (titulo === '' || descricao === '' || data === '' || id_tipo_servico === '' || idUsuario === ''){
@@ -46,29 +43,40 @@ class ServicosController {
         if (!data.match(/^\d{4}-[0-1][0-2]-[0-3]\d\s([0-1][0-9]|2[0-3]):[0-5]\d$/)){
             return Responses.badRequest(res, "A data não tem um formato válido. Ex:'1980-11-24 00:00'")
         }
-
-        /* 
-        status: null -> Bad Request
-        false -> não usou o agendamento
-        true -> agendamento solicitado */
-        if (responseAgendamento.status === false){
-            return
+        if (Data.dataAtual() > new Date(data)){
+            return Responses.badRequest(res, "Data do serviço já passou! Por favor informe uma data válida.")
         }
+
+        const servico = {titulo, descricao, data: new Date(data), id_tipo_servico, idUsuario }        
+
+        const {agendamento} = req.body;
+        const responseAgendamento = Agendamento.validar(agendamento)
+        
+        // status: null -> Bad Request
+        // false -> não usou o agendamento
+        // true -> agendamento solicitado
         if (responseAgendamento.status === null){
             const helpRoutes = "EXEMPLO DE REQUISIÇÃO VÁLIDA:  'agendamento': {'repeticao_ate': '1999-11-20 00:00', 'repetir_dias': ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM']"
             return Responses.badRequest(res, responseAgendamento.msgError, [], helpRoutes )
         }
         if (responseAgendamento.status === true){
-            console.log(responseAgendamento)
+            const dadosParaAgendamento = {
+                repetir_ate: new Date(responseAgendamento.repetir_ate), 
+                repetir_dias: responseAgendamento.repetir_dias
+            }
 
+            const agendamento = Agendamento.preparar(dadosParaAgendamento)
+
+            const response = await Agendamento.agendar(agendamento, servico)
+            if (response.status === false) throw new Error("Erro Interno ao adicionar os serviços!")
+
+            return Responses.created(res)
         }
 
-        const servico = {titulo, descricao, data: new Date(data).toISOString(), id_tipo_servico, idUsuario }        
+        const responseAddServicoSemAgendamento = await ServicosModel.AddServico(servico)
+        if (responseAddServicoSemAgendamento.status === false) return Responses.internalServerError(res, msgError)
 
-        const responseAddServico = await ServicosModel.AddServico(servico)
-        if (responseAddServico.status === false) return Responses.internalServerError(res, responseAddServico.msgError)
-
-        return Responses.internalServerError(res)
+        return Responses.created(res)
     }
 
     async Delete(req, res) {

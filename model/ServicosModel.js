@@ -46,19 +46,13 @@ class ServicosModel {
         }
     }
 
-    async AddServico(servico, agendamento = null){
+    async AddServico(servico){
         try {
-            if(agendamento){
-
-
-                return {status: true}
-            }
-
-            /* const data = await database
+            const data = await database
                 .insert(servico)
                 .table('servicos')
 
-            if (data.length > 0) return {status: true} */
+            if (data.length > 0) return {status: true}
             return {status: true};
         } catch (error) {
             console.warn(error.message)
